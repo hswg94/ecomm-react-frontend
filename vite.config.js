@@ -8,12 +8,14 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'https://api.ecomm.hswg94.com/',
-        changeOrigin: true
+        target: 'https://api.hswg94.com/',
+        changeOrigin: true,
+        secure: true
       },
       '/uploads': {
-        target: 'https://api.ecomm.hswg94.com/',
-        changeOrigin: true
+        target: 'https://api.hswg94.com/',
+        changeOrigin: true,
+        secure: true
       }
     }
   }
