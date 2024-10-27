@@ -8,11 +8,11 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://ecomm-api-alb-783376611.ap-southeast-1.elb.amazonaws.com/',
+        target: 'http://api.ecomm.hswg94.com/',
         changeOrigin: true
       },
       '/uploads': {
-        target: 'http://ecomm-api-alb-783376611.ap-southeast-1.elb.amazonaws.com/',
+        target: 'http://api.ecomm.hswg94.com/',
         changeOrigin: true
       }
     }
