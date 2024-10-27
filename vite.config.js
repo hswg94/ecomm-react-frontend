@@ -6,17 +6,17 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    proxy: {
-      '/api': {
-        target: 'https://api.hswg94.com/',
-        changeOrigin: true,
-        secure: true
-      },
-      '/uploads': {
-        target: 'https://api.hswg94.com/',
-        changeOrigin: true,
-        secure: true
-      }
-    }
+    // proxy: {
+    //   '/api': {
+    //     target: 'https://api.hswg94.com/',
+    //     changeOrigin: true,
+    //     secure: true
+    //   },
+    //   '/uploads': {
+    //     target: 'https://api.hswg94.com/',
+    //     changeOrigin: true,
+    //     secure: true
+    //   }
+    // }
   }
 })
