@@ -1,4 +1,4 @@
-export const BASE_URL = '';
+export const BASE_URL = 'https://api.hswg94.com';
 export const PRODUCTS_URL = 'https://api.hswg94.com/api/products';
 export const USERS_URL = 'https://api.hswg94.com/api/users';
 export const ORDERS_URL = 'https://api.hswg94.com/api/orders';
