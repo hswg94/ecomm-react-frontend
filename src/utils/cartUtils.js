@@ -1,28 +1,30 @@
 export const addDecimals = (num) => {
-  return Math.round((num * 100) / 100).toFixed(2);
+  return (Math.round(num * 100) / 100).toFixed(2);
 };
 
 export const updateCart = (state) => {
-  // Calculate items price and total quantity
-  state.itemsPrice = addDecimals(
-    state.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
+  // Calculate the items price in whole number (pennies) to avoid issues with
+  // floating point number calculations
+  const itemsPrice = state.cartItems.reduce(
+    (acc, item) => acc + (item.price * 100 * item.qty) / 100,
+    0
   );
+  state.itemsPrice = addDecimals(itemsPrice);
 
-  // Calculate total quantity of items
-  state.cartItems.reduce((acc, item) => (acc += item.qty), 0);
+  // Calculate the shipping price
+  const shippingPrice = itemsPrice > 100 ? 0 : 10;
+  state.shippingPrice = addDecimals(shippingPrice);
 
-  // Calculate shipping price
-  state.shippingPrice = addDecimals(state.itemsPrice > 100 ? 0 : 10);
+  // Calculate the tax price
+  const taxPrice = 0.09 * itemsPrice;
+  state.taxPrice = addDecimals(taxPrice);
 
-  // Calculate tax price
-  state.taxPrice = addDecimals(Number((0.08 * state.itemsPrice).toFixed(2)));
+  const totalPrice = itemsPrice + shippingPrice + taxPrice;
+  // Calculate the total price
+  state.totalPrice = addDecimals(totalPrice);
 
-  // Calculate total price
-  state.totalPrice = (
-    Number(state.itemsPrice) +
-    Number(state.shippingPrice) +
-    Number(state.taxPrice)
-  ).toFixed(2);
+  // Save the cart to localStorage
+  localStorage.setItem('cart', JSON.stringify(state));
 
-  localStorage.setItem("cart", JSON.stringify(state));
+  return state;
 };
