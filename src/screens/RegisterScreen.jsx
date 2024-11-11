@@ -96,7 +96,7 @@ const RegisterScreen = () => {
             className="mt-2"
             disabled={isLoading}
           >
-            Sign In
+            Register
           </Button>
           {isLoading && <Loader />}
         </Form>
