@@ -16,6 +16,7 @@ const UserEditScreen = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isVendor, setIsVendor] = useState(false); // Here
 
   const {
     data: user,
@@ -31,7 +32,7 @@ const UserEditScreen = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      await updateUser({ userId, name, email, isAdmin });
+      await updateUser({ userId, name, email, isAdmin, isVendor });
       toast.success('user updated successfully');
       refetch();
       navigate('/admin/userlist');
@@ -45,6 +46,7 @@ const UserEditScreen = () => {
       setName(user.name);
       setEmail(user.email);
       setIsAdmin(user.isAdmin);
+      setIsVendor(user.isVendor);
     }
   }, [user]);
 
@@ -90,6 +92,15 @@ const UserEditScreen = () => {
                 label='Is Admin'
                 checked={isAdmin}
                 onChange={(e) => setIsAdmin(e.target.checked)}
+              ></Form.Check>
+            </Form.Group>
+
+            <Form.Group className='my-2' controlId='isvendor'>
+              <Form.Check
+                type='checkbox'
+                label='Is Vendor'
+                checked={isVendor}
+                onChange={(e) => setIsVendor(e.target.checked)}
               ></Form.Check>
             </Form.Group>
 

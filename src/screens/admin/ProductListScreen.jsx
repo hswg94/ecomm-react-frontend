@@ -5,23 +5,18 @@ import { useParams } from "react-router-dom";
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
 import Paginate from "../../components/Paginate";
+import { useSelector } from "react-redux";
 
 import {
   useGetProductsQuery,
   useDeleteProductMutation,
-  useCreateProductMutation,
 } from "../../slices/productsApiSlice";
 import { toast } from "react-toastify";
 
 const ProductListScreen = () => {
   const { pageNumber } = useParams();
-
-  const {
-    data,
-    isLoading,
-    error,
-    refetch,
-  } = useGetProductsQuery({
+  const { userInfo } = useSelector((state) => state.auth);
+  const { data, isLoading, error, refetch } = useGetProductsQuery({
     pageNumber,
   });
 
@@ -32,21 +27,7 @@ const ProductListScreen = () => {
     if (window.confirm("Are you sure")) {
       try {
         await deleteProduct(id);
-        toast.success('Product Deleted!')
-        refetch();
-      } catch (err) {
-        toast.error(err?.data?.message || err.error);
-      }
-    }
-  };
-
-  const [createProduct, { isLoading: loadingCreate }] =
-    useCreateProductMutation();
-
-  const createProductHandler = async () => {
-    if (window.confirm("Are you sure you want to create a new product?")) {
-      try {
-        await createProduct();
+        toast.success("Product Deleted!");
         refetch();
       } catch (err) {
         toast.error(err?.data?.message || err.error);
@@ -58,16 +39,18 @@ const ProductListScreen = () => {
     <>
       <Row className="align-items-center">
         <Col>
-          <h1>Products</h1>
+          {userInfo.isAdmin && <h1>All Listed Products</h1>}
+          {userInfo.isVendor && <h1>Your Listed Products</h1>}
         </Col>
         <Col className="text-end">
-          <Button className="my-3" onClick={createProductHandler}>
-            <FaPlus /> Create Product
-          </Button>
+          <LinkContainer to="/admin/product/create">
+            <Button className="my-3">
+              <FaPlus /> Create Product
+            </Button>
+          </LinkContainer>
         </Col>
       </Row>
 
-      {loadingCreate && <Loader />}
       {loadingDelete && <Loader />}
       {isLoading ? (
         <Loader />
@@ -87,32 +70,39 @@ const ProductListScreen = () => {
               </tr>
             </thead>
             <tbody>
-              {data.products.map((product) => (
-                <tr key={product._id}>
-                  <td>{product._id}</td>
-                  <td>{product.name}</td>
-                  <td>${product.price}</td>
-                  <td>{product.category}</td>
-                  <td>{product.brand}</td>
-                  <td>
-                    <LinkContainer to={`/admin/product/${product._id}/edit`}>
-                      <Button variant="light" className="btn-sm mx-2">
-                        <FaEdit />
+              {data.products
+                .filter((product) => {
+                  if (userInfo.isAdmin) return true; // Admins see all products
+                  return userInfo.isVendor && userInfo._id === product.user; // Vendors see only their own products
+                })
+                .map((product) => (
+                  <tr key={product._id}>
+                    <td>{product._id}</td>
+                    <td>{product.name}</td>
+                    <td>${product.price}</td>
+                    <td>{product.category}</td>
+                    <td>{product.brand}</td>
+                    <td>
+                      <LinkContainer to={`/admin/product/${product._id}/edit`}>
+                        <Button variant="light" className="btn-sm mx-2">
+                          <FaEdit />
+                        </Button>
+                      </LinkContainer>
+                      <Button
+                        variant="danger"
+                        className="btn-sm"
+                        onClick={() => deleteHandler(product._id)}
+                      >
+                        <FaTrash style={{ color: "white" }} />
                       </Button>
-                    </LinkContainer>
-                    <Button
-                      variant="danger"
-                      className="btn-sm"
-                      onClick={() => deleteHandler(product._id)}
-                    >
-                      <FaTrash style={{ color: "white" }} />
-                    </Button>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </Table>
-          <Paginate pages={data.pages} page={data.page} isAdmin={true}/>
+          {userInfo.isAdmin && (
+            <Paginate pages={data.pages} page={data.page} isAdmin={true} />
+          )}
         </>
       )}
     </>

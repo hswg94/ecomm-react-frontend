@@ -41,6 +41,7 @@ const UserListScreen = () => {
               <th>ID</th>
               <th>NAME</th>
               <th>EMAIL</th>
+              <th>VENDOR</th>
               <th>ADMIN</th>
               <th></th>
             </tr>
@@ -52,6 +53,13 @@ const UserListScreen = () => {
                 <td>{user.name}</td>
                 <td>
                   <a href={`mailto:${user.email}`}>{user.email}</a>
+                </td>
+                <td>
+                  {user.isVendor ? (
+                    <FaCheck style={{ color: 'green' }} />
+                  ) : (
+                    <FaTimes style={{ color: 'red' }} />
+                  )}
                 </td>
                 <td>
                   {user.isAdmin ? (
